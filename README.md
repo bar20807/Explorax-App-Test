@@ -31,10 +31,10 @@ Sigue los siguientes pasos para clonar y configurar el proyecto en tu entorno lo
 
 En el directorio del proyecto, puedes ejecutar los siguientes comandos:
 
-### `npm start`
+- **npm start**
 
-### `npm run android`
+- **npm run android**
 
-### `npm run ios`
+- **npm run ios**
 
-### `npm run web`
+- **npm run web**
