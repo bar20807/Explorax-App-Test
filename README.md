@@ -19,6 +19,8 @@ Sigue los siguientes pasos para clonar y configurar el proyecto en tu entorno lo
    ```sh
    git clone [URL_del_repositorio]
    cd [nombre_del_directorio]
+   ```
+
 # Prueba Técnica - App Explorax
 
 Este repositorio contiene una prueba técnica realizada para la app Explorax. La prueba consistió en desarrollar tres pantallas utilizando React Native con CSS. Las pantallas desarrolladas son:
@@ -40,6 +42,7 @@ Sigue los siguientes pasos para clonar y configurar el proyecto en tu entorno lo
    ```sh
    git clone [URL_del_repositorio]
    cd [nombre_del_directorio]
+   ```
 
 # Prueba Técnica - App Explorax
 
@@ -59,6 +62,7 @@ Este repositorio contiene una prueba técnica realizada para la app Explorax. La
 Sigue los siguientes pasos para clonar y configurar el proyecto en tu entorno local:
 
 1. Clona el repositorio en tu máquina local:
+
    ```
    git https://github.com/bar20807/Explorax-App-Test
    cd Explorax-App-Test
@@ -69,15 +73,14 @@ Sigue los siguientes pasos para clonar y configurar el proyecto en tu entorno lo
    npm install
    ```
 
-##  Scripts Disponibles 
+## Scripts Disponibles
 
 En el directorio del proyecto, puedes ejecutar los siguientes comandos:
 
 ### `npm start`
+
 ### `npm run android`
+
 ### `npm run ios`
+
 ### `npm run web`
-
-
-
-
