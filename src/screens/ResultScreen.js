@@ -1,5 +1,4 @@
-// src/screens/ResultScreen.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +7,7 @@ import {
   Dimensions,
   ImageBackground,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import CustomButton from "../components/CustomButton";
 
@@ -17,9 +17,63 @@ const ResultScreen = ({ route, navigation }) => {
   const { correct, incorrect } = route.params;
   const totalQuestions = correct + incorrect;
   const coins = correct * 10; // Updated coin calculation to match provided example
+  const [animations, setAnimations] = useState([]);
+
+  useEffect(() => {
+    startAnimations();
+  }, []);
+
+  const startAnimations = () => {
+    const newAnimations = [];
+    const numberOfCoins = coins / 2; // Number of coins to animate
+    for (let i = 0; i < numberOfCoins; i++) {
+      const animation = new Animated.Value(0);
+      newAnimations.push(animation);
+      Animated.timing(animation, {
+        toValue: 1,
+        duration: 1500,
+        delay: i * 100, // Stagger the animations
+        useNativeDriver: true,
+      }).start();
+    }
+    setAnimations(newAnimations);
+  };
 
   const formatCoins = (coins) => {
     return coins.toString().padStart(5, "0");
+  };
+
+  const renderCoinAnimations = () => {
+    return animations.map((animation, index) => {
+      const coinAnimationStyle = {
+        transform: [
+          {
+            translateY: animation.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -500],
+            }),
+          },
+          {
+            translateX: animation.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 100],
+            }),
+          },
+        ],
+        opacity: animation.interpolate({
+          inputRange: [0, 0.5, 1],
+          outputRange: [1, 0.4, 0],
+        }),
+      };
+
+      return (
+        <Animated.Image
+          key={index}
+          source={require("../../assets/images/moneda.png")}
+          style={[styles.coinImage, styles.animatedCoin, coinAnimationStyle]}
+        />
+      );
+    });
   };
 
   return (
@@ -82,6 +136,7 @@ const ResultScreen = ({ route, navigation }) => {
             style={styles.button}
           />
         </View>
+        {renderCoinAnimations()}
       </View>
     </ImageBackground>
   );
@@ -154,6 +209,11 @@ const styles = StyleSheet.create({
     height: 60,
     marginRight: 10,
     resizeMode: "contain", // Asegurarse de que la imagen no esté cortada
+  },
+  animatedCoin: {
+    position: "absolute",
+    bottom: height / 2.5, // Adjust starting position
+    left: width / 2.5, // Adjust starting position
   },
   coinText: {
     fontSize: 24,

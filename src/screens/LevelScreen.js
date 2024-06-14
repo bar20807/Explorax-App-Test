@@ -1,5 +1,4 @@
-// src/screens/LevelScreen.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,6 +9,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Audio } from "expo-av";
+import Animated, {
+  Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import QuestionCard from "../components/QuestionCard";
 
 const { width, height } = Dimensions.get("window");
@@ -48,6 +54,8 @@ const LevelScreen = ({ navigation }) => {
   const [correctSound, setCorrectSound] = useState();
   const [incorrectSound, setIncorrectSound] = useState();
   const [progressSound, setProgressSound] = useState();
+
+  const coinShake = useSharedValue(0);
 
   useEffect(() => {
     loadSounds();
@@ -113,6 +121,13 @@ const LevelScreen = ({ navigation }) => {
       setCorrect(correct + 1);
       setCoins(coins + 10); // Incrementar monedas por respuesta correcta
       correctSound?.replayAsync();
+      // Animación de vibración de la moneda
+      coinShake.value = withSequence(
+        withTiming(10, { duration: 50, easing: Easing.linear }),
+        withTiming(-10, { duration: 50, easing: Easing.linear }),
+        withTiming(10, { duration: 50, easing: Easing.linear }),
+        withTiming(0, { duration: 50, easing: Easing.linear })
+      );
     } else {
       setIncorrect(incorrect + 1);
       incorrectSound?.replayAsync();
@@ -122,6 +137,12 @@ const LevelScreen = ({ navigation }) => {
   const formatCoins = (coins) => {
     return coins.toString().padStart(5, "0");
   };
+
+  const animatedCoinStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: coinShake.value }],
+    };
+  });
 
   return (
     <ImageBackground
@@ -136,9 +157,9 @@ const LevelScreen = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.topRightContainer}>
           <View style={styles.coinContainer}>
-            <Image
+            <Animated.Image
               source={require("../../assets/images/moneda.png")}
-              style={styles.coin}
+              style={[styles.coin, animatedCoinStyle]}
             />
             <Text style={styles.coinText}>{formatCoins(coins)}</Text>
           </View>
