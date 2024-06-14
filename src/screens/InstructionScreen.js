@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import LottieView from "lottie-react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -16,7 +17,12 @@ const InstructionScreen = ({ navigation }) => {
 
   useEffect(() => {
     animationRef.current?.play();
+    animationRef.current?.play(30, 120);
   }, []);
+
+  const navigateToLevel = () => {
+    navigation.navigate("Transition", { nextScreen: "Level" });
+  };
 
   return (
     <ImageBackground
@@ -54,10 +60,7 @@ const InstructionScreen = ({ navigation }) => {
             Supera estos desafíos y empieza a completar la misión de:
           </Text>
           <Text style={styles.mission}>Jerarquía de operaciones</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Level")}
-          >
+          <TouchableOpacity style={styles.button} onPress={navigateToLevel}>
             <Text style={styles.buttonText}>¡ACEPTO EL RETO!</Text>
           </TouchableOpacity>
         </View>

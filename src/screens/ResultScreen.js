@@ -76,7 +76,9 @@ const ResultScreen = ({ route, navigation }) => {
           </View>
           <CustomButton
             title="Volver a Inicio"
-            onPress={() => navigation.navigate("Instructions")}
+            onPress={() =>
+              navigation.navigate("Transition", { nextScreen: "Instructions" })
+            }
             style={styles.button}
           />
         </View>

@@ -25,6 +25,16 @@ const questions = [
     options: ["18", "20", "15", "10"],
     correctAnswer: "18",
   },
+  {
+    question: "3 x 3 + 6 = ?",
+    options: ["15", "12", "9", "18"],
+    correctAnswer: "15",
+  },
+  {
+    question: "4 x 4 + 2 = ?",
+    options: ["18", "25", "32", "19"],
+    correctAnswer: "18",
+  },
 ];
 
 const LevelScreen = ({ navigation }) => {
@@ -34,6 +44,7 @@ const LevelScreen = ({ navigation }) => {
   const [currentQuestion, setCurrentQuestion] = useState(questions[0]);
   const [selectedOption, setSelectedOption] = useState(null);
   const [coins, setCoins] = useState(0);
+  const [hasAnswered, setHasAnswered] = useState(false); // Nuevo estado
 
   useEffect(() => {
     if (selectedOption !== null) {
@@ -50,12 +61,17 @@ const LevelScreen = ({ navigation }) => {
       setLevel(level + 1);
       setCurrentQuestion(questions[level + 1]);
     } else {
-      navigation.navigate("Result", { correct, incorrect });
+      navigation.navigate("Transition", {
+        nextScreen: "Result",
+        correct: correct,
+        incorrect: incorrect,
+      });
     }
   };
 
   const handleAnswer = (option) => {
     setSelectedOption(option);
+    setHasAnswered(true); // Marcar que ha respondido al menos una pregunta
     if (option === currentQuestion.correctAnswer) {
       setCorrect(correct + 1);
       setCoins(coins + 10); // Incrementar monedas por respuesta correcta
@@ -105,12 +121,23 @@ const LevelScreen = ({ navigation }) => {
           Nivel {level + 1}/{questions.length}
         </Text>
         <View style={styles.progressBarContainer}>
-          <View
-            style={[
-              styles.progressBar,
-              { width: `${((level + 1) / questions.length) * 100}%` },
-            ]}
-          />
+          {hasAnswered ? (
+            <ImageBackground
+              source={require("../../assets/images/BarraProgresoNaranja.png")}
+              style={[
+                styles.progressBarFill,
+                { width: `${((level + 1) / questions.length) * 100}%` },
+              ]}
+              imageStyle={{ resizeMode: "cover" }}
+            />
+          ) : (
+            <View
+              style={[
+                styles.progressBarFill,
+                { width: "100%", backgroundColor: "#FFF" },
+              ]}
+            />
+          )}
         </View>
         <QuestionCard
           question={currentQuestion.question}
@@ -192,15 +219,15 @@ const styles = StyleSheet.create({
   progressBarContainer: {
     width: "75%",
     height: 30,
-    backgroundColor: "#DDD",
     borderRadius: 10,
     overflow: "hidden",
     marginBottom: 20,
     alignSelf: "center",
+    backgroundColor: "#DDD", // Fondo blanco
   },
-  progressBar: {
+  progressBarFill: {
     height: "100%",
-    backgroundColor: "#FFA500",
+    backgroundColor: "transparent", // Fondo transparente para superposición de imagen
   },
   title_container: {
     padding: 20,
