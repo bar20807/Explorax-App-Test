@@ -9,8 +9,8 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from "react-native";
+import { Audio } from "expo-av";
 import QuestionCard from "../components/QuestionCard";
-import CustomButton from "../components/CustomButton";
 
 const { width, height } = Dimensions.get("window");
 
@@ -45,6 +45,14 @@ const LevelScreen = ({ navigation }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [coins, setCoins] = useState(0);
   const [hasAnswered, setHasAnswered] = useState(false); // Nuevo estado
+  const [correctSound, setCorrectSound] = useState();
+  const [incorrectSound, setIncorrectSound] = useState();
+  const [progressSound, setProgressSound] = useState();
+
+  useEffect(() => {
+    loadSounds();
+    return () => unloadSounds();
+  }, []);
 
   useEffect(() => {
     if (selectedOption !== null) {
@@ -55,11 +63,40 @@ const LevelScreen = ({ navigation }) => {
     }
   }, [selectedOption]);
 
+  const loadSounds = async () => {
+    const correctSoundObject = new Audio.Sound();
+    const incorrectSoundObject = new Audio.Sound();
+    const progressSoundObject = new Audio.Sound();
+    try {
+      await correctSoundObject.loadAsync(
+        require("../../assets/sounds/RespuestaCorrecta.mp3")
+      );
+      await incorrectSoundObject.loadAsync(
+        require("../../assets/sounds/RespuestaIncorrecta.mp3")
+      );
+      await progressSoundObject.loadAsync(
+        require("../../assets/sounds/BarraProgreso.mp3")
+      ); // Asegúrate de tener este archivo
+      setCorrectSound(correctSoundObject);
+      setIncorrectSound(incorrectSoundObject);
+      setProgressSound(progressSoundObject);
+    } catch (error) {
+      console.error("Error loading sounds: ", error);
+    }
+  };
+
+  const unloadSounds = async () => {
+    await correctSound?.unloadAsync();
+    await incorrectSound?.unloadAsync();
+    await progressSound?.unloadAsync();
+  };
+
   const handleNextLevel = () => {
     setSelectedOption(null);
     if (level < questions.length - 1) {
       setLevel(level + 1);
       setCurrentQuestion(questions[level + 1]);
+      progressSound?.replayAsync();
     } else {
       navigation.navigate("Transition", {
         nextScreen: "Result",
@@ -75,8 +112,10 @@ const LevelScreen = ({ navigation }) => {
     if (option === currentQuestion.correctAnswer) {
       setCorrect(correct + 1);
       setCoins(coins + 10); // Incrementar monedas por respuesta correcta
+      correctSound?.replayAsync();
     } else {
       setIncorrect(incorrect + 1);
+      incorrectSound?.replayAsync();
     }
   };
 
@@ -145,9 +184,8 @@ const LevelScreen = ({ navigation }) => {
           correctAnswer={currentQuestion.correctAnswer}
           selectedOption={selectedOption}
           onAnswer={handleAnswer}
+          handleNextLevel={handleNextLevel}
         />
-        <CustomButton title="Siguiente" onPress={handleNextLevel} />
-        <Text style={styles.reportQuestion}>Reportar pregunta</Text>
       </View>
     </ImageBackground>
   );
@@ -182,6 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 5,
+    marginTop: 10,
   },
   coin: {
     width: 20,
@@ -195,6 +234,7 @@ const styles = StyleSheet.create({
   },
   dropdownButton: {
     marginLeft: 10,
+    marginTop: 10,
   },
   dropdownIcon: {
     width: 30,
@@ -232,7 +272,7 @@ const styles = StyleSheet.create({
   title_container: {
     padding: 20,
     alignItems: "center",
-    margin: 20,
+    margin: 10,
   },
   title: {
     color: "#FFFFFF",
@@ -243,11 +283,6 @@ const styles = StyleSheet.create({
     width: 250,
     height: 30,
     resizeMode: "contain",
-  },
-  reportQuestion: {
-    marginTop: 10,
-    color: "#FFFFFF",
-    textDecorationLine: "underline",
   },
 });
 

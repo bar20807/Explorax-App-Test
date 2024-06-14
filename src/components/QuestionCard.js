@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import OptionButton from "./OptionButton";
+import CustomButton from "./CustomButton";
 
 const QuestionCard = ({
   question,
@@ -9,6 +10,7 @@ const QuestionCard = ({
   correctAnswer,
   selectedOption,
   onAnswer,
+  handleNextLevel,
 }) => {
   const handleSelectOption = (option) => {
     if (selectedOption === null) {
@@ -44,6 +46,8 @@ const QuestionCard = ({
             isIncorrect={selectedOption === option && option !== correctAnswer}
           />
         ))}
+        <CustomButton title="Siguiente" onPress={handleNextLevel} />
+        <Text style={styles.reportQuestion}>Reportar pregunta</Text>
       </View>
     </View>
   );
@@ -52,7 +56,7 @@ const QuestionCard = ({
 const styles = StyleSheet.create({
   cardContainer: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 150,
   },
   card: {
     padding: 20,
@@ -88,6 +92,11 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "center",
     width: "80%",
+  },
+  reportQuestion: {
+    marginTop: 10,
+    color: "#FFFFFF",
+    textDecorationLine: "underline",
   },
 });
 
